@@ -9,7 +9,7 @@
     isbn13: "",
     title: "Red Rising",
     subtitle: "",
-    authors: ["Pierce Brown", "John Adams", "Susan Williams"],
+    authors: ["Pierce Brown", "John Adams", "Susan Williams" ],
     cover: "/images/books/red-rising.jpg",
     publisher: "Del Rey Books",
     published: "2014-01-28",
@@ -21,7 +21,7 @@
     date_read: "",
   }
 
-function tagify(str: string) {
+function truncate(str: string) {
   if (str.length >= 18) {
     str = str.substring(0, 20);
     str += "...";
@@ -50,11 +50,18 @@ function slugify(str: string) {
     <hgroup>
       <h1>{book.title}</h1>
       <h2>{book.subtitle}</h2>
-      <h3>
+      <h4>
+        <!-- TODO: have see more button for > 5 authors -->
         {#each book.authors as author}
-          <span class="author"><a href="/authors/{slugify(author)}">{author}</a></span>
+          {#if author.length >= 100}
+            <span class="author"><a
+              href="/authors/{slugify(author)}" tt="{author}"
+              >{truncate(author)}</a></span>
+          {:else}
+            <span class="author"><a href="/authors/{slugify(author)}">{author}</a></span>
+          {/if}
         {/each}
-      </h3>
+      </h4>
     </hgroup>
 
     <div class="cover">
@@ -69,10 +76,17 @@ function slugify(str: string) {
         <span>{book.published}</span>
         <br>
         <div class="tags">
-          {#each book.tags.map(tagify) as tag}
-            <tag>
-              <a href="/tags/{slugify(tag)}">{tag}</a>
-            </tag>
+          <!-- TODO: have see more button for > 10 tags -->
+          {#each book.tags as tag}
+            {#if tag.length >= 18}
+              <tag tt="{tag}">
+                <a href="/tags/{slugify(tag)}">{truncate(tag)}</a>
+              </tag>
+            {:else}
+              <tag>
+                <a href="/tags/{slugify(tag)}">{tag}</a>
+              </tag>
+            {/if}
           {/each}
         </div>
     </div>
@@ -118,7 +132,7 @@ function slugify(str: string) {
 <style>
 .info {
   display: grid;
-  gap: 1rem 2rem;
+  gap: 0 2rem;
   grid-template-columns: 180px 1fr;
   grid-template-rows: repeat(2, 1fr);
   grid-template-areas:
